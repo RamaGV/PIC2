@@ -1,0 +1,6 @@
+Status register 0 C -> 00000011
+UMSEL0 00 = UART
+UPM0n 00 = Paridad desactivada
+USBS0 0 = 1-bit de stop
+ UCSZ0n 	110 = 8-bit de datos 
+ 
