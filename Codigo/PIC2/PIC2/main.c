@@ -34,6 +34,7 @@ bool decenasCargadas = false;
 
 int main(void){
 	LCD_instanciar();
+	DATA_PTL_cargaXY();
 	PAD_init();
 	menu_estadoActual = opc_agregar_interno;
 	LCD_menu[menu_estadoActual]();
@@ -88,6 +89,9 @@ int main(void){
 					switch(key){
 						case 'A':
 							LCD_enviando();
+							// Cargar método que genera el buffer de enviado en DATA_PTL
+							// Utilizar el método de envío.
+							DATA_PTL_vaciarBoxes();
 							_delay_ms(200);
 						break;
 						case 'B':
@@ -96,6 +100,7 @@ int main(void){
 						break;
 						case 'C':
 							LCD_vaciar();
+							DATA_PTL_vaciarBoxes();
 							_delay_ms(200);
 						break;
 						case 'D':
@@ -133,7 +138,7 @@ int main(void){
 			}
 			
 			// Muestra en pantalla luego de presionar el pad
-			_delay_ms(100);
+			_delay_ms(150);
 			LCD_menu[menu_estadoActual]();
 		}
 	}
