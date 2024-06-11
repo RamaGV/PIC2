@@ -124,3 +124,19 @@ void LCD_vaciar(){
 	LCD_goto(1,3); LCD_print("|                  |");
 	LCD_goto(1,4); LCD_print("|                  |");
 }
+
+void LCD_vinculando(){
+	LCD_clear();
+	LCD_goto(1,1); LCD_print("|                  |");
+	LCD_goto(1,2); LCD_print("|   Vinculando..  |");
+	LCD_goto(1,3); LCD_print("|                  |");
+	LCD_goto(1,4); LCD_print("|                  |");
+}
+
+void LCD_modificar(){
+	LCD_clear();
+	LCD_goto(1,1); LCD_print("|                  |");
+	LCD_goto(1,2); LCD_print("|    Modificar..   |");
+	LCD_goto(1,3); LCD_print("|                  |");
+	LCD_goto(1,4); LCD_print("|                  |");
+}

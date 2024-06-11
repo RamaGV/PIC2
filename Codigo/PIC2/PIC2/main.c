@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "DEF_ATMEGA328P.h"
 /* DEF_ATMEGA328P.h>
@@ -36,7 +37,7 @@ int main(void){
 	LCD_instanciar();
 	DATA_PTL_cargaXY();
 	PAD_init();
-	menu_estadoActual = opc_agregar_interno;
+	//menu_estadoActual = opc_agregar_interno;
 	LCD_menu[menu_estadoActual]();
 	//BTH_init();
 	
@@ -89,10 +90,10 @@ int main(void){
 					switch(key){
 						case 'A':
 							LCD_enviando();
-							// Cargar método que genera el buffer de enviado en DATA_PTL
+							// Cargar método que genera el buffer de enviado en DATA_PTL.
 							// Utilizar el método de envío.
+							//DATA_PTL_generarEnvio(PTL_datos);
 							DATA_PTL_vaciarBoxes();
-							_delay_ms(200);
 						break;
 						case 'B':
 							LCD_stock();
@@ -105,6 +106,107 @@ int main(void){
 						break;
 						case 'D':
 							menu_estadoActual = opc_agregar;
+						break;
+						case '<':
+							decenasCargadas = false;
+							if(indice_box == 0)
+								indice_box = 8;
+							else
+								indice_box--;
+						break;
+						case '>':
+							decenasCargadas = false;
+							if(indice_box == 8)
+								indice_box = 0;
+							else
+								indice_box++;
+						break;
+						default:
+							key_numero = key - 48;					// Se sustrae 48, porque los números representados en ASCII comienzan en el caracter 48 [ASCII(48) = '0'].
+							
+							if (decenasCargadas){
+								boxes[indice_box].valor += key_numero;
+								indice_box++;						// Luego de cargar las unidades el índice de carga avanza.
+							}else{
+								boxes[indice_box].valor = 0;		// Si se vuelve a cargar, se reestablece.
+								boxes[indice_box].valor += (10 * key_numero);
+							}
+							
+							decenasCargadas = !decenasCargadas;
+						break;
+					}
+				break;
+							
+				case opc_bth_interno:
+					switch(key){
+						case 'A':
+							menu_estadoActual = opc_bth_vincular;
+						break;
+						case 'B':
+							menu_estadoActual = opc_bth_modificar;
+						break;
+						case 'D':
+							menu_estadoActual = opc_bth;
+						break;
+					}
+				break;
+				case opc_bth_vincular:
+					switch(key){
+						case 'A':
+							LCD_vinculando();
+							_delay_ms(200);
+						break;
+						case 'B':
+							LCD_vinculando();
+							_delay_ms(200);
+						break;
+						case 'D':
+							menu_estadoActual = opc_bth_interno;
+						break;
+					}
+				break;
+				case opc_bth_modificar:
+					switch(key){
+						case 'A':
+							LCD_modificar();
+							_delay_ms(200);
+						break;
+						case 'B':
+							LCD_modificar();
+							_delay_ms(200);
+						break;
+						case 'D':
+							menu_estadoActual = opc_bth_interno;
+						break;
+					}
+				break;
+	/*
+					|--------------------------------------------------------|
+					|  / \                                            / \    |
+					| < # >     Opción para quitar objetos del PTL   < # >   | 
+					|  \ /                                            \ /    |
+					|--------------------------------------------------------| 
+	*/
+				case opc_quitar_interno:
+					switch(key){
+						case 'A':
+							LCD_enviando();
+							// Cargar método que genera el buffer de enviado en DATA_PTL.
+							// Utilizar el método de envío.
+							//DATA_PTL_generarEnvio(PTL_datos);
+							DATA_PTL_vaciarBoxes();
+						break;
+						case 'B':
+							LCD_stock();
+							_delay_ms(200);
+						break;
+						case 'C':
+							LCD_vaciar();
+							DATA_PTL_vaciarBoxes();
+							_delay_ms(200);
+						break;
+						case 'D':
+							menu_estadoActual = opc_quitar;
 						break;
 						case '<':
 							decenasCargadas = false;

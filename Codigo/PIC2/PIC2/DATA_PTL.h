@@ -2,6 +2,7 @@
 // En la estructura, un atributo "buffer_envio" -> contiene el mensaje a enviar
 // Crear un método que recorra las boxes y genere el buffer_envio
 // https://replit.com/@ramirovazquez4/Prueba-de-concepto#main.c
+#include <string.h>
 
 struct box {
 	int valor;
@@ -11,18 +12,21 @@ struct box {
 
 struct datosPTL{
 	char* addr_bth;
-	char* buffer_envio;
+	char buffer_envio[256];
 	//int indice_box = 0;
 	//struct box boxes[9];
 };
 
+struct datosPTL PTL_datos;
 struct box boxes[9];
 int indice_box = 0;
 
-void DATA_PTL_generarEnvio(struct datosPTL nuevoPTL){
-	for (int i=0; i<=8; i++){
-		nuevoPTL.buffer_envio += boxes[i].valor;
-		nuevoPTL.buffer_envio += "#";		
+void DATA_PTL_generarEnvio(struct datosPTL nuevoPTL) {
+	for (int i = 0; i < 9; i++) {
+		char temp_str[10]; 
+		sprintf(temp_str, "%d", boxes[i].valor);
+		strcat(nuevoPTL.buffer_envio, temp_str);
+		strcat(nuevoPTL.buffer_envio, "#");
 	}
 }
 
@@ -30,6 +34,7 @@ void DATA_PTL_vaciarBoxes(){
 	for(int i=0; i<9; i++){
 		boxes[i].valor = 0;
 	}
+	indice_box = 0;
 }
 
 void DATA_PTL_cargaXY(){
