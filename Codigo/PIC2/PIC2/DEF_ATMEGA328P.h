@@ -1,4 +1,3 @@
-
 #define DDRBbits (*(DDBbits)_SFR_MEM_ADDR(DDRB))
 #define PORTBbits (*(POBbits)_SFR_MEM_ADDR(PORTB))
 #define PINBbits (*(PIBbits)_SFR_MEM_ADDR(PINB))

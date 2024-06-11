@@ -3,8 +3,7 @@
 
 char data[20] = "";				// Aquí se almacena la info recibida del bth
 
-void BTH_init()
-{
+void BTH_init(){
 	// USART como UART
 	UCSR0C &=~ (1<<UMSEL00);
 	UCSR0C &=~ (1<<UMSEL01);
@@ -30,8 +29,7 @@ void BTH_init()
 	UCSR0B |= (1<<RXEN0);
 }
 
-void BTH_recibe()
-{
+void BTH_recibe(){
 	memset(data, 0, sizeof(data)); // Limpia los registros
 	int i = 0;
 	while(i<20){

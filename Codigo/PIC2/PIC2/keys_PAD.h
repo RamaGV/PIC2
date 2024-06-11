@@ -9,12 +9,12 @@
 #define FILA4		PORTBbits.PB3_
 
 uint8_t key;
-int key_numero = 0;
 unsigned char keys_PAD[16] = {
 	'1', '2', '3', 'A',
 	'4', '5', '6', 'B',
 	'7', '8', '9', 'C',
 	'<', '0', '>', 'D'   };
+
 
 void PAD_init(void){
 	DDRBbits.DDRB0 = 1;
@@ -62,10 +62,7 @@ uint8_t COLUMNA_barido(void){
 }
 
 void FILA_init(uint8_t fila){
-	FILA1 = 1;
-	FILA2 = 1;
-	FILA3 = 1;
-	FILA4 = 1;
+	FILA1, FILA2, FILA3, FILA4 = 1;
 	
 	switch(fila){
 		case 1: FILA1 = 0; break;
@@ -73,16 +70,18 @@ void FILA_init(uint8_t fila){
 		case 3: FILA3 = 0; break;
 		case 4: FILA4 = 0; break;
 	}
+	
+	_delay_ms(10);
 }
 
 uint8_t PAD_leer(void){
-	key = 0;
+	_delay_ms(10);
+	//key = 0;
 	
 	for (int fila = 1; fila <= 4; fila++){
 		FILA_init(fila);
-		if(COLUMNA_barido()){
+		if(COLUMNA_barido())
 			return keys_PAD[key];
-		}
 	}
 	
 	return 0;

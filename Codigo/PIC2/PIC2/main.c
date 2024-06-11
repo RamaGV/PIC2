@@ -9,7 +9,8 @@
 #include <stdbool.h>
 
 #include "DEF_ATMEGA328P.h"
-/*
+/* DEF_ATMEGA328P.h>
+	------ Estructura de datos para cada puerto y pin, posteriormente utilizados en cada componente para su configuración.
 */
 #include "LCD.h"
 /* LCD.h>
@@ -31,141 +32,110 @@
 
 bool decenasCargadas = false;
 
-int main(void)
-{
+int main(void){
 	LCD_instanciar();
 	PAD_init();
-	LCD_print("F");
-	LCD_num(145);
-	BTH_init();
+	menu_estadoActual = opc_agregar_interno;
+	LCD_menu[menu_estadoActual]();
+	//BTH_init();
 	
-	while (1)
-	{
+	while (1){
+		uint8_t key = PAD_leer();	// Si se presiona el pad, guarda la key presionada
 		
-		/*
-		// Leo pad
-		uint8_t key = PAD_leer();
-		if (key != 0)
-		{
-			switch(menuPrincipal_estadoActual)
-			{
-				case opc_bth:
-					if(in_menuPrincipal)	// FSM para menu principal
-					{
-						if(key == '>')					// Se dirige a la opción de la derecha
-							menuPrincipal_estadoActual = opc_agregar;
-						else if(key == '0')				// 0 selecciona y envia el menu interno a la LCD
-						{
-							// Vaciar valores de las box
-							menuInterno_estadoActual = opc_bth_opcA;
-							in_menuPrincipal = false;							
-						}
-					} 
-					else						// FSM para menu interno
-					{
-						switch(menuInterno_estadoActual)
-						{
-							case opc_bth_opcA:
-							if (key == '>')
-								menuInterno_estadoActual = opc_bth_opcB;
-							break;
-
-							case opc_bth_opcB:
-							if (key == '<')
-								menuInterno_estadoActual = opc_bth_opcA;
-							else if (key == '>')
-								menuInterno_estadoActual = opc_bth_opcC;
-							break;
-
-							case opc_bth_opcC:
-							if (key == '<')
-								menuInterno_estadoActual = opc_bth_opcB;
-							break; 
-						}
+		if (key != 0){
+			switch(menu_estadoActual){
+				case opc_agregar:
+					switch(key){
+						case '0':
+							menu_estadoActual = opc_agregar_interno;
+						break;
+						case '>':
+							menu_estadoActual = opc_bth;
+						break;
 					}
 				break;
-				case opc_agregar:
-					if (menu_muestra_interno)
-					{
-						if (key == '<')
-						{
-							menuPrincipal_estadoActual = opc_bth;
-						}
-						else if (key == '>')
-						{
-							menuPrincipal_estadoActual = opc_quitar;
-						}
-						else if (key == '0')
-						{
-							menuInterno_estadoActual = opc_agregar_int;
-							in_menuPrincipal = false;
-						}
-					}
-					else
-					{											// Acciones dentro del menu interno agregar.
-						if (key == 'A')
-						{ // Enviar.
-							// mostrarDatos(); Muestra la cantidad que tiene cada box !
-							// Llamar a función que envía nuevo stock.
-						}
-						else if (key == 'B')
-						{ 
-							// Ver stock.
-						}
-						else if (key == 'C')
-						{ 
-							// Vaciar celda.
-						}
-						else if (key == 'D')
-						{ // Volver.
-							//indBox = 0;
-							in_menuPrincipal = true;
-						}
+				case opc_bth:
+					switch(key){
+						case '0':
+							menu_estadoActual = opc_bth_interno;
+						break;
+						case '<':
+							menu_estadoActual = opc_agregar;
+						break;
+						case '>':
+							menu_estadoActual = opc_quitar;
+						break;
 					}
 				break;
 				case opc_quitar:
-					if (in_menuPrincipal)
-					{
-						if (key == '<')
-						{
-							menuPrincipal_estadoActual = opc_agregar;
-						}
-						else if (key == '0')
-						{
-							menuInterno_estadoActual = opc_quitar_int;
-							in_menuPrincipal = false;
-						}
-					}
-					else
-					{											// Acciones dentro del menu interno quitar.
-						if (key == 'A')
-						{ // Enviar.
-							// mostrarDatos(); Muestra la cantidad que tiene cada box !
-							// Llamar a función que envía nuevo stock.
-						}
-						else if (key == 'B')
-						{
-							// Ver stock.
-						}
-						else if (key == 'C')
-						{
-							// Vaciar celda.
-						}
-						else if (key == 'D')
-						{ // Volver.
-							//indBox = 0;
-							in_menuPrincipal = true;
-						}
+					switch(key){
+						case '0':
+							menu_estadoActual = opc_quitar_interno;
+						break;
+						case '<':
+							menu_estadoActual = opc_bth;
+						break;
 					}
 				break;
-			}		
+/*
+				|--------------------------------------------------------|
+				|  / \                                            / \    |
+				| < # >     Opción para agregar objetos al PTL   < # >   | 
+				|  \ /                                            \ /    |
+				|--------------------------------------------------------| 
+*/
+				case opc_agregar_interno:
+					switch(key){
+						case 'A':
+							LCD_enviando();
+							_delay_ms(200);
+						break;
+						case 'B':
+							LCD_stock();
+							_delay_ms(200);
+						break;
+						case 'C':
+							LCD_vaciar();
+							_delay_ms(200);
+						break;
+						case 'D':
+							menu_estadoActual = opc_agregar;
+						break;
+						case '<':
+							decenasCargadas = false;
+							if(indice_box == 0)
+								indice_box = 8;
+							else
+								indice_box--;
+						break;
+						case '>':
+							decenasCargadas = false;
+							if(indice_box == 8)
+								indice_box = 0;
+							else
+								indice_box++;
+						break;
+						default:
+							key_numero = key - 48;					// Se sustrae 48, porque los números representados en ASCII comienzan en el caracter 48 [ASCII(48) = '0'].
+							
+							if (decenasCargadas){
+								boxes[indice_box].valor += key_numero;
+								indice_box++;						// Luego de cargar las unidades el índice de carga avanza.
+							}else{
+								boxes[indice_box].valor = 0;		// Si se vuelve a cargar, se reestablece.
+								boxes[indice_box].valor += (10 * key_numero);
+							}
+							
+							decenasCargadas = !decenasCargadas;
+						break;
+					}
+				break;
+			}
 			
-			// Muestro pantalla luego de presionar el pad
-			if(in_menuPrincipal)
-				menu_muestra_principal[menuPrincipal_estadoActual]();
-			else
-				menu_muestra_interno[menuInterno_estadoActual]();
+			// Muestra en pantalla luego de presionar el pad
+			_delay_ms(100);
+			LCD_menu[menu_estadoActual]();
 		}
-	*/
 	}
 }
+
